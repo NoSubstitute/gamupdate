@@ -1,0 +1,192 @@
+@echo off
+CLS
+REM This script will update GAMADV-XTD3 to the latest Windows x64 zip version, if there is a newer version.
+REM Created by Kim Nilsson, borrowing the macro from StackOverflow. https://stackoverflow.com/a/54425285/8289545
+REM I recommend you read all REM lines, and adjust accordingly, and do not change where it says not to.
+
+REM Wiping many variables that probably shouldn't be globally set outside of this script.
+set GAMPARENTDIR= & set a= & set b= & set c= & set download= & set e= & set f=
+set gamzip= & set gamVersionInfo= & set gamLatestVersionLine=
+set gamCurrentVersionLine= & set gamLatestVersion= & set gamCurrentVersion=
+
+REM SETLOCAL is necessary to create the macro %$set% used in this script.
+SETLOCAL
+
+REM **********************************************************
+REM The two values below MUST be correct, or script will fail!
+set GAMDIR=D:\gamadv-xtd3
+set GAMPARENTDIR=D:\
+REM **********************************************************
+
+REM You probably don't have change anything below here.
+REM Unless you aim to schedule the script to update automatically!
+REM Then you should REM some echo and PAUSE lines.
+REM Don't go past the dragons!
+
+call :initMacro
+
+REM This can be used when you know on which lines the relevant bits of info are.
+REM Else you'd need to pipe the command through findstr, which would require more than one run for multiple values.
+%$set% gamVersionInfo="%GAMDIR%\gam version checkrc"
+
+REM This would show all values and on which row each is.
+REM call :ShowVariable gamVersionInfo
+REM This prints the 8th & 7th rows of the printed info.
+REM echo %gamVersionInfo[8]%
+REM echo %gamVersionInfo[7]%
+
+REM This sets gamLatestVersionLine to be the value of everything on row 8, and gamCurrentVersionLine to row 7.
+REM Adjust if the output from "gam version checkrc" ever changes.
+set gamLatestVersionLine=%gamVersionInfo[8]%
+set gamCurrentVersionLine=%gamVersionInfo[7]%
+
+REM This prints the values of gamLatestVersionLine & gamCurrentVersionLine.
+REM echo %gamLatestVersionLine%
+REM echo %gamCurrentVersionLine%
+
+REM This removes the characters "   Latest: " from the value gamLatestVersionLine & "  Current: " from gamCurrentVersionLine.
+REM If you have characters after your wanted value, you may have to run that command again, removing those separately.
+REM Adjust if the output from "gam version checkrc" ever changes.
+set gamLatestVersion=%gamLatestVersionLine:   Latest: =%
+set gamCurrentVersion=%gamCurrentVersionLine:  Current: =%
+
+REM This prints our wanted gamVersion values.
+REM echo %gamLatestVersion%
+REM echo %gamCurrentVersion%
+
+REM If gamLatestVersion is the same as gamCurrentVersion end the process.
+if %gamLatestVersion%==%gamCurrentVersion% (
+    echo You are using the current version!
+    ENDLOCAL
+    EXIT /B
+)
+
+REM Since gamLatestVersion is not the same as gamCurrentVersion there should be a new version.
+    echo There's a newer version of GAMADV-XTD3.
+    PAUSE
+    echo Downloading it now.
+        REM Printing the two versions.
+        REM echo %gamLatestVersion%
+        REM echo %gamCurrentVersion%
+
+    REM Build the download URL of the variables a, b, c and gamLatestVersion.
+        set a=https://github.com/taers232c/GAMADV-XTD3/releases/download/v
+        set b=/gamadv-xtd3-
+        set c=-windows-x86_64.zip
+        set download=%a%%gamLatestVersion%%b%%gamLatestVersion%%c%
+        REM Print the complete download URL.
+        REM echo %download%
+
+    REM Downloading the latest version. curl is included in Windows 10.
+        curl -s -S --output-dir %TEMP% -O -L %download%
+        echo Latest version downloaded. Unpacking it now.
+        
+    REM Unpack the latest version over the current. Don't forget to adjust the GAMPARENTDIR above to fit your system.
+        set e=gamadv-xtd3-
+        set f=-windows-x86_64.zip
+        set gamzip=%TEMP%\%e%%gamLatestVersion%%f%
+        REM echo %gamzip%
+    
+    REM User powershell to unpack. Requires Powershell 5 or newer.
+        REM powershell Expand-Archive -Force %gamzip% %GAMPARENTDIR%
+    REM Or use tar to unpack. Requires recent Windows 10.
+        tar -x -f %gamzip% -C %GAMPARENTDIR%
+        echo Latest version unpacked to %GAMDIR%
+    
+    REM Remove the downloaded zip file.
+        del %TEMP%\%e%%gamLatestVersion%%f%
+        echo Downloaded zip file deleted. You will now be shown the latest updates.
+        echo Press Q to quit reading the updates. Press Ctrl-C and then Y to *not* read the updates.
+        PAUSE
+    
+    REM Open the GamUpdate.txt file with more, so you can read the latest updates.
+        more %GAMDIR%\GamUpdate.txt
+    
+    ENDLOCAL
+    EXIT /B
+REM This is the end of the GAMADV-XTD3 update script.
+REM Don't change anything below. That's where the macros are created.
+
+REM Here be dragons. Don't ever change anything below here!
+
+:ShowVariable
+setlocal EnableDelayedExpansion
+for /L %%n in (0 1 !%~1.max!) do (
+    echo %%n: !%~1[%%n]!
+)
+echo.
+EXIT /B
+
+:initMacro
+if "!!"=="" (
+    echo ERROR: Delayed Expansion must be disabled while defining macros
+    (goto) 2>nul
+    (goto) 2>nul
+)
+(set LF=^
+%=empty=%
+)
+(set \n=^^^
+%=empty=%
+)
+
+set $set=FOR /L %%N in (1 1 2) dO IF %%N==2 ( %\n%
+    setlocal EnableDelayedExpansion                                 %\n%
+    for /f "tokens=1,* delims== " %%1 in ("!argv!") do (            %\n%
+        endlocal                                                    %\n%
+        endlocal                                                    %\n%
+        set "%%~1.Len=0"                                            %\n%
+        set "%%~1="                                                 %\n%
+        if "!!"=="" (                                               %\n%
+            %= Used if delayed expansion is enabled =%              %\n%
+                setlocal DisableDelayedExpansion                    %\n%
+                for /F "delims=" %%O in ('"%%~2 | findstr /N ^^"') do ( %\n%
+                if "!!" NEQ "" (                                    %\n%
+                    endlocal                                        %\n%
+                    )                                               %\n%
+                setlocal DisableDelayedExpansion                    %\n%
+                set "line=%%O"                                      %\n%
+                setlocal EnableDelayedExpansion                     %\n%
+                set pathExt=:                                       %\n%
+                set path=;                                          %\n%
+                set "line=!line:^=^^!"                              %\n%
+                set "line=!line:"=q"^""!"                           %\n%
+                call set "line=%%line:^!=q""^!%%"                   %\n%
+                set "line=!line:q""=^!"                             %\n%
+                set "line="!line:*:=!""                             %\n%
+                for /F %%C in ("!%%~1.Len!") do (                   %\n%
+                    FOR /F "delims=" %%L in ("!line!") Do (         %\n%
+                        endlocal                                    %\n%
+                        endlocal                                    %\n%
+                        set "%%~1[%%C]=%%~L" !                      %\n%
+                        if %%C == 0 (                               %\n%
+                            set "%%~1=%%~L" !                       %\n%
+                        ) ELSE (                                    %\n%
+                            set "%%~1=!%%~1!!LF!%%~L" !             %\n%
+                        )                                           %\n%
+                    )                                               %\n%
+                    set /a %%~1.Len+=1                              %\n%
+                )                                                   %\n%
+            )                                                       %\n%
+        ) ELSE (                                                    %\n%
+            %= Used if delayed expansion is disabled =%             %\n%
+            for /F "delims=" %%O in ('"%%~2 | findstr /N ^^"') do ( %\n%
+                setlocal DisableDelayedExpansion                    %\n%
+                set "line=%%O"                                      %\n%
+                setlocal EnableDelayedExpansion                     %\n%
+                set "line="!line:*:=!""                             %\n%
+                for /F %%C in ("!%%~1.Len!") DO (                   %\n%
+                    FOR /F "delims=" %%L in ("!line!") DO (         %\n%
+                        endlocal                                    %\n%
+                        endlocal                                    %\n%
+                        set "%%~1[%%C]=%%~L"                        %\n%
+                    )                                               %\n%
+                    set /a %%~1.Len+=1                              %\n%
+                )                                                   %\n%
+            )                                                       %\n%
+        )                                                           %\n%
+        set /a %%~1.Max=%%~1.Len-1                                  %\n%
+)                                                                   %\n%
+    ) else setlocal DisableDelayedExpansion^&set argv=
+
+goto :eof
