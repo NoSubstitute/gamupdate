@@ -1,24 +1,26 @@
 #!/bin/bash
 #
-# Download and install latest compiled GAMADV-XTD3
+# Download and install latest compiled GAMADV-XTD3 on Linux and macOS.
 #
-# You MUST edit the YourHomeDir variable below in the three places, and maybe also the actual gamadv-xtd3 dir.
+# You MUST edit the GAM variable below if it isn't correct.
+# If so, also line 21 to say where you want gam installed. Same with line 23, where more reads the GamUpdate.txt file.
+# If the GAM variable is correct, then you don't have to edit anything.
 # The reason for hardcoding the program dir is because you can have several separate GAM versions installed at the same time, and may not want to update them all.
 # Comment *all* echo lines and the more line if you are scheduling an automatic update.
+GAM=$HOME/gamadv-xtd3/gam
 
 echo
 echo "Checking to see if there is an update of GAMADV-XTD3."
 echo
 
-if /home/YourHomeDir/gamadv-xtd3/gam version checkrc; then
-        echo $? # This line isn't necessary. I have it just to see the error code from the checkrc command. 0 means TRUE and that the versions match.
+if $GAM version checkrc; then
+#        echo $? # This line isn't necessary. I have it just to see the error code from the checkrc command. 0 means TRUE and that the versions match.
         echo "You are using the current version!"
         exit
 else
-        echo $? # This line isn't necessary. Just like the one above.
+#        echo $? # This line isn't necessary. Just like the one above.
         echo "There's a newer version of GAMADV-XTD3. Downloading it now."
-        bash <(curl -s -S -L https://git.io/fhZWP) -l -d /home/YourHomeDir
+        bash <(curl -s -S -L https://git.io/fhZWP) -l -d $HOME
         wait
-        more /home/YourHomeDir/gamadv-xtd3/GamUpdate.txt #This line opens the GamUpdate.txt file, so I can see what new features or bugfixes has been added.
-        # If you are to fully automate the updating, you need to disable the line above completely.
+        more $HOME/gamadv-xtd3/GamUpdate.txt #This line opens the GamUpdate.txt file, so I can see what new features or bugfixes has been added.
 fi
