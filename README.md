@@ -13,3 +13,5 @@ Then you can run the command 'update-gam' whenever you want to initiate an updat
 
 ## Need more information?
 Oh, you read all of this. Good, that means that you know that you have to read _all_ instructions before trying to use new tools. Same with reading the contents of the actual scripts. They usually contain more detailed instructions.
+
+If that fails, please, submit your question as an issue here on github, and I'll get back to you asap. Thanks for helping me improve.
