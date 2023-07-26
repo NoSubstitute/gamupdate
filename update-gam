@@ -32,13 +32,13 @@ REM Else you'd need to pipe the command through findstr, which would require mor
 REM This would show all values and on which row each is.
 REM call :ShowVariable gamVersionInfo
 REM This prints the 8th & 7th rows of the printed info.
+REM echo %gamVersionInfo[9]%
 REM echo %gamVersionInfo[8]%
-REM echo %gamVersionInfo[7]%
 
 REM This sets gamLatestVersionLine to be the value of everything on row 8, and gamCurrentVersionLine to row 7.
 REM Adjust if the output from "gam version checkrc" ever changes.
-set gamLatestVersionLine=%gamVersionInfo[8]%
-set gamCurrentVersionLine=%gamVersionInfo[7]%
+set gamLatestVersionLine=%gamVersionInfo[9]%
+set gamCurrentVersionLine=%gamVersionInfo[8]%
 
 REM This prints the values of gamLatestVersionLine & gamCurrentVersionLine.
 REM echo %gamLatestVersionLine%
