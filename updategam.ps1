@@ -21,7 +21,7 @@ if ($lastexitcode -eq 1) {
   # Download the latest release
   (new-object System.Net.WebClient).DownloadFile($dlurl, "$dir\gamadv-xtd3-latest-windows-x86_64.zip")
   # Save the number of lines in the change log
-  $oldchangeloglinescount=(Get-Content .\GamUpdate.txt | Select-String .*).count
+  $oldchangeloglinescount=(Get-Content $dir\GamUpdate.txt | Select-String .*).count
   # Extract the contents of the zip file
   Expand-Archive "$dir\gamadv-xtd3-latest-windows-x86_64.zip" "$dir\" -Force
   # Move the extracted files to the current location
@@ -29,10 +29,10 @@ if ($lastexitcode -eq 1) {
   # Remove the empty gamadv-xtd3 directory
   rm "$dir\gamadv-xtd3\"
   # Save the number of lines in the updated change log
-  $newchangeloglinescount=(Get-Content .\GamUpdate.txt | Select-String .*).count
+  $newchangeloglinescount=(Get-Content $dir\GamUpdate.txt | Select-String .*).count
   # Get the new lines in the change log
   Write-Host "Latest Changes in GAMADV-XTD3" -ForegroundColor Red -BackgroundColor White
-  Get-Content .\GamUpdate.txt -Head ($newchangeloglinescount-$oldchangeloglinescount)
+  Get-Content $dir\GamUpdate.txt -Head ($newchangeloglinescount-$oldchangeloglinescount)
 
   # Display a message saying that it has been updated. 
   Write-Host "GAMADV-XTD3 has been updated" -ForegroundColor Red -BackgroundColor White
