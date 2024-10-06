@@ -1,8 +1,11 @@
-# This is not my script originally. It was created by Chris River (on request by Gabriel Clifton) and amended by Paul Ogier.
+# Just like the script for GAM7, this is not my script originally.
+# It was created by Chris River (on request by Gabriel Clifton) and amended by Paul Ogier.
 # That process can be seen here.
 # https://groups.google.com/g/google-apps-manager/c/k2JEsdT6jcs/m/DdrLY_GcBQAJ
 
 # I updated the script to make it possible to run the script regardless of where the user is, and also to run it automatically.
+# Here's my version for GAM7.
+# https://github.com/NoSubstitute/gamupdate/blob/main/updategam7.ps1
 
 # Check the version of GAMADV-XTD3 and update if new version exists
 
@@ -43,10 +46,10 @@ if ($lastexitcode -eq 1) {
   Write-Host "Latest Changes in GAMADV-XTD3" -ForegroundColor Red -BackgroundColor White
   Get-Content $dir\GamUpdate.txt -Head ($newchangeloglinescount-$oldchangeloglinescount)
 
-  # Display a message saying that GAMADV-XTD3 has been updated, then pause.  Disable if script is to run automatically.
+  # Display a message saying that GAMADV-XTD3 has been updated, then pause. Disable if script is to run automatically.
   Write-Host "GAMADV-XTD3 has been updated" -ForegroundColor Red -BackgroundColor White
 } else {
-  # Display a message saying GAMADV-XTD3 is already up-to-date, then pause.  Disable if script is to run automatically.
+  # Display a message saying GAMADV-XTD3 is already up-to-date, then pause. Disable if script is to run automatically.
     Write-Host "GAMADV-XTD3 is already up-to-date" -ForegroundColor Green
 
 }
