@@ -12,6 +12,8 @@
 # This variable MUST be adjusted to match your system.
 # Where is GAMADV-XTD3 installed?
 $dir = "D:\gamadv-xtd3"
+# Disable this line to make the script work after adjusting the $dir variable above.
+Write-Host 'You must adjust the $dir variable. Then disable this line.'; Exit
 
 # HERE BE DRAGONS!
 # Do not change anything below.
