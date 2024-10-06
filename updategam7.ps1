@@ -1,15 +1,12 @@
 # Check the version of GAM7 and update if new version exists
-# Where is GAM7 installed? This needs to be set up here, as it may be different for different users.
+# Where is GAM7 installed?
 $dir = "D:\gam7"
 
 # Create a new variable pointing directly to the gam binary.
-$gam = "$dir\gam"
+$gam = "$dir\gam.exe"
 
-# This seems to give the same exit code 1 regardless of what the current version is.
-#$version = "$gam version checkrc"
-
-# Using a hard-coded path works, but then there are two variables that needs to be adjusted.
-$version = d:\gam7\gam version checkrc
+# Check if there is a new version.
+$version = &$gam --% version checkrc
 
 # If the last exit code is 1, GAM7 is not up-to-date
 if ($lastexitcode -eq 1) {
@@ -19,9 +16,6 @@ if ($lastexitcode -eq 1) {
   $releases = curl "https://api.github.com/repos/GAM-team/GAM/releases" | ConvertFrom-Json
   # Get the download URL for the latest release
   $dlurl = ($releases[0].assets | where {$_.name -like "*windows*64.zip"}).browser_download_url
-  ## Get the current location
-  ## Can't be used if script is to be run automatically, nor if the user isn't inside the actual gam7 dir, which shouldn't be a requirement.
-  #$dir = (Get-Location).Path
   # Download the latest release
   (new-object System.Net.WebClient).DownloadFile($dlurl, "$dir\gam7-latest-windows-x86_64.zip")
   # Save the number of lines in the change log
