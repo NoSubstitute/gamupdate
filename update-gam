@@ -1,5 +1,6 @@
 @echo off
 CLS
+REM This script is currently broken, and I don't know why. I recommend you use one of the Powershell versions instead.
 REM This script will update GAMADV-XTD3 to the latest Windows x64 zip version, if there is a newer version.
 REM Created by Kim Nilsson, borrowing the macro from StackOverflow. https://stackoverflow.com/a/54425285/8289545
 REM I recommend you read all REM lines, and adjust accordingly, and do not change where it says not to.
