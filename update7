@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+# Download and install latest compiled GAM7 on Linux and macOS.
+#
+# You MUST edit the GAMDIR variable below if it isn't correct.
+
+# If the GAMDIR variable is correct, then you don't have to edit anything.
+# The reason for hardcoding the program dir is because you can have several separate GAM versions installed at the same time, and may not want to update them all.
+# Comment *all* echo lines and the more line if you are scheduling an automatic update.
+GAMDIR=$HOME/bin/gam7
+
+# Here be dragons! Don't edit anything below here.
+GAM=$GAMDIR/gam
+
+echo
+echo "Checking to see if there is an update of GAMADV-XTD3."
+echo
+
+if $GAM version checkrc; then
+#        echo $? # If you enable this you will see the error code from the checkrc command. 0 means TRUE and that the versions match.
+        echo "You are using the current version!"
+        exit
+else
+#	 echo $? #This line isn't necessary. Just like the one above.
+        echo "There's a newer version of GAM7. Downloading it now."
+        bash <(curl -s -S -L ttps://gam-shortn.appspot.com/gam-install) -l -d $GAMDIR -s
+        wait
+        more $GAMDIR/GamUpdate.txt # This line opens the GamUpdate.txt file, so I can see what new features or bugfixes has been added.
+        # If you are to fully automate the updating, you need to disable the line above completely.
+	# And you don't need any echos. They can be commented too.
+fi
