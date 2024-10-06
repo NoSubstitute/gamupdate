@@ -12,6 +12,8 @@
 # This variable MUST be adjusted to match your system.
 # Where is GAM7 installed?
 $dir = "D:\gam7"
+# Disable this line to make the script work after adjusting the $dir variable above.
+Write-Host 'You must adjust the $dir variable. Then disable this line.'; Exit
 
 # HERE BE DRAGONS!
 # Do not change anything below.
