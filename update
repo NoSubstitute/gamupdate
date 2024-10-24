@@ -23,7 +23,7 @@ if $GAM version checkrc; then
 else
 #	 echo $? #This line isn't necessary. Just like the one above.
         echo "There's a newer version of GAMADV-XTD3. Downloading it now."
-        bash <(curl -s -S -L https://git.io/fhZWP) -l -d $GAMDIR -s
+        bash <(curl -s -S -L https://git.io/fhZWP) -l -p false -d $GAMDIR -s
         wait
         more $GAMDIR/GamUpdate.txt # This line opens the GamUpdate.txt file, so I can see what new features or bugfixes has been added.
         # If you are to fully automate the updating, you need to disable the line above completely.
