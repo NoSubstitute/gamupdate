@@ -4,7 +4,7 @@
 # https://groups.google.com/g/google-apps-manager/c/k2JEsdT6jcs/m/DdrLY_GcBQAJ
 
 # I updated the script to make it possible to run the script regardless of where the user is, and also to run it automatically.
-# Here's my version for GAMADV-XTD3.
+# Here's my version for GAM7.
 # https://github.com/NoSubstitute/gamupdate/blob/main/updategam.ps1
 
 # Check the version of GAM7 and update if new version exists
@@ -60,6 +60,6 @@ if ($lastexitcode -eq 1) {
 
 }
 # If the script is to be run automatically, disable the Pause.
-# You may also consider whether to disable all Wite-Host lines, as you don't need that, since nobody is going to see them.
+# You may also consider whether to disable all Write-Host lines, as you don't need that, since nobody is going to see them.
 # Nor do you need the lines getting and showing the GamUpdate.txt file.
 Pause
