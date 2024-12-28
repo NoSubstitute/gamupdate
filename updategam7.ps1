@@ -4,8 +4,10 @@
 # https://groups.google.com/g/google-apps-manager/c/k2JEsdT6jcs/m/DdrLY_GcBQAJ
 
 # I updated the script to make it possible to run the script regardless of where the user is, and also to run it automatically.
+
 # Here's my version for GAM7.
 # https://github.com/NoSubstitute/gamupdate/blob/main/updategam.ps1
+# This script must be run as an administrator
 
 # Check the version of GAM7 and update if new version exists
 
@@ -41,15 +43,15 @@ if ($lastexitcode -eq 1) {
   # Extract the contents of the zip file to a temporary directory.
   # The \gam7 path is included in the zip and may have to be adjusted if it's changed in the future.
   Expand-Archive "$dir\gam7-latest-windows-x86_64.zip" "$dir\" -Force
-  # Move the extracted files to the current location.
-  mv "$dir\gam7\*" "$dir\" -Force
-  # Remove the empty temporary directory.
-  rm "$dir\gam7\"
+  # Copy the extracted files to the current location.
+  Copy-Item "$dir\gam7\*" "$dir\" -Force -Recurse
+  # Remove the temporary directory.
+  rm "$dir\gam7" -Force -Recurse
   
   # Save the number of lines in the updated change log. Disable if script is to run automatically.
   $newchangeloglinescount=(Get-Content $dir\GamUpdate.txt | Select-String .*).count
   # Get and display the new lines in the change log. Disable if script is to run automatically.
-  Write-Host "Latest Changes in GGAM7" -ForegroundColor Red -BackgroundColor White
+  Write-Host "Latest Changes in GAM7" -ForegroundColor Red -BackgroundColor White
   Get-Content $dir\GamUpdate.txt -Head ($newchangeloglinescount-$oldchangeloglinescount)
 
   # Display a message saying that GAM7 has been updated, then pause. Disable if script is to run automatically.
