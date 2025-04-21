@@ -13,7 +13,7 @@ GAMDIR=$HOME/bin/gam7
 GAM=$GAMDIR/gam
 
 echo
-echo "Checking to see if there is an update of GAMADV-XTD3."
+echo "Checking to see if there is an update of GAM7."
 echo
 
 if $GAM version checkrc; then
