@@ -37,12 +37,11 @@ if ($lastexitcode -eq 1) {
   # Get the latest release from the GAM7 repository on GitHub.
   $releases = curl "https://api.github.com/repos/GAM-team/GAM/releases" | ConvertFrom-Json
   # Get the download URL for the latest release.
-  # Ensure you select only the first matching asset
-  $dlurl = ($releases[0].assets | Where-Object { $_.name -like "*$winversion" } | Select-Object -First 1).browser_download_url
+  $dlurl = ($releases[0].assets | where {$_.name -like "*$winversion"}).browser_download_url
   # Download the latest release.
   (New-Object System.Net.WebClient).DownloadFile($dlurl, "$dir\gam7-latest-windows-x86_64.zip")
-
-  # Save the number of lines in the current change log. Disable if script is to run automatically.
+  
+    # Save the number of lines in the current change log. Disable if script is to run automatically.
   $oldchangeloglinescount=(Get-Content $dir\GamUpdate.txt | Select-String .*).count
   
   # Extract the contents of the zip file to a temporary directory.
