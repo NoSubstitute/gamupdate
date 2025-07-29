@@ -4,18 +4,22 @@
 # https://groups.google.com/g/google-apps-manager/c/k2JEsdT6jcs/m/DdrLY_GcBQAJ
 
 # I updated the script to make it possible to run the script regardless of where the user is, and also to run it automatically.
-
-# Here's my version for GAM7.
-# https://github.com/NoSubstitute/gamupdate/blob/main/updategam.ps1
 # This script must be run as an administrator
 
 # Check the version of GAM7 and update if new version exists
+## There's now an ARM version for Windows, so code needed one more variable.
 
 # This variable MUST be adjusted to match your system.
 # Where is GAM7 installed?
 $dir = "D:\gam7"
 # Disable this line to make the script work after adjusting the $dir variable above.
 Write-Host 'You must adjust the $dir variable. Then disable this line.'; Exit
+
+# What type of Windows do you have, X86 or ARM? Uncomment the correct one below.
+# $winversion = "windows-arm64.zip"
+# $winversion = "windows-x86_64.zip"
+# Disable this line to make the script work after adjusting the $winversion variable above.
+Write-Host 'You must uncomment the correct $winversion variable. Then disable this line.'; Exit
 
 # HERE BE DRAGONS!
 # Do not change anything below.
@@ -33,10 +37,11 @@ if ($lastexitcode -eq 1) {
   # Get the latest release from the GAM7 repository on GitHub.
   $releases = curl "https://api.github.com/repos/GAM-team/GAM/releases" | ConvertFrom-Json
   # Get the download URL for the latest release.
-  $dlurl = ($releases[0].assets | where {$_.name -like "*windows*64.zip"}).browser_download_url
+  # Ensure you select only the first matching asset
+  $dlurl = ($releases[0].assets | Where-Object { $_.name -like "*$winversion" } | Select-Object -First 1).browser_download_url
   # Download the latest release.
-  (new-object System.Net.WebClient).DownloadFile($dlurl, "$dir\gam7-latest-windows-x86_64.zip")
-  
+  (New-Object System.Net.WebClient).DownloadFile($dlurl, "$dir\gam7-latest-windows-x86_64.zip")
+
   # Save the number of lines in the current change log. Disable if script is to run automatically.
   $oldchangeloglinescount=(Get-Content $dir\GamUpdate.txt | Select-String .*).count
   
