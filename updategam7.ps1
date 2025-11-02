@@ -4,7 +4,7 @@
 # https://groups.google.com/g/google-apps-manager/c/k2JEsdT6jcs/m/DdrLY_GcBQAJ
 
 # I updated the script to make it possible to run the script regardless of where the user is, and also to run it automatically.
-# This script must be run as an administrator
+# This script does no longer need to be run as an administrator. I'm not sure why. :-)
 
 # Check the version of GAM7 and update if new version exists
 ## There's now an ARM version for Windows, so code needed one more variable.
@@ -29,19 +29,49 @@ if (-not $gam -or -not $gam.Source) {
 }
 
 # Automatically determine which Windows architecture version to download
-$architecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture
-$winversion = switch ($architecture) {
-    "X64"  { "windows-x86_64.zip" }
-    "X86"  { "windows-x86_64.zip" }
-    "Arm"  { "windows-arm64.zip" }
-    "Arm64" { "windows-arm64.zip" }
-    Default { throw "Unknown Windows architecture. You may need to manually specify the `$winversion variable in $PSCommandPath" }
+# If no architecture version is found, uncomment and adjust $winversion accordingly
+#$winversion = "windows-x86_64.zip"
+
+# Also, if the auto-detect fails, you need to comment this entire section
+
+# from here...
+# Try to get the RuntimeInformation type
+$runtimeInfoType = [Type]::GetType('System.Runtime.InteropServices.RuntimeInformation')
+# Write-Host "runtimeInfoType $runtimeInfoType"
+
+if ($runtimeInfoType) {
+    # PowerShell Core (.NET Core)
+    $architecture = $runtimeInfoType::OSArchitecture.ToString()
+    # Write-Host "PS Core $architecture"
+} else {
+    # Windows PowerShell (.NET Framework)
+    $architecture = $env:PROCESSOR_ARCHITECTURE
+    # Write-Host "ENV $architecture"
 }
+
+Write-Host "Detected Architecture: $architecture"
+
+# Map architecture to download file
+$winversion = switch ($architecture.ToUpper()) {
+    "X64"   { "windows-x86_64.zip" }
+    "AMD64" { "windows-x86_64.zip" }
+    "X86"   { "windows-x86_64.zip" }
+    "ARM"   { "windows-arm64.zip" }
+    "ARM64" { "windows-arm64.zip" }
+    Default { throw "Unknown Windows architecture. Please set `$winversion manually." }
+}
+# ...to here.
 
 # HERE BE DRAGONS!
 # Do not change anything below.
 # Create a new variable pointing directly to the gam binary.
-$gam = "$dir\gam.exe"
+#$gam = "$dir\gam.exe"
+$gam = $gam.Source
+Write-Host "I found gam here $gam with the following information."
+
+# Print currently installed version.
+$currentversion = &$gam --% version
+Write-Host "Installed GAM7 version $currentversion" -ForegroundColor Blue -BackgroundColor White
 
 # Check if there is a new version.
 $version = &$gam --% version checkrc
@@ -55,6 +85,7 @@ if ($lastexitcode -eq 1) {
   $releases = curl "https://api.github.com/repos/GAM-team/GAM/releases" | ConvertFrom-Json
   # Get the download URL for the latest release.
   $dlurl = ($releases[0].assets | where {$_.name -like "*$winversion"}).browser_download_url
+  Write-Host "Downloading this file $dlurl"
   # Download the latest release.
   (New-Object System.Net.WebClient).DownloadFile($dlurl, "$dir\gam7-latest-$winversion")
   
@@ -62,12 +93,14 @@ if ($lastexitcode -eq 1) {
   $oldchangeloglinescount=(Get-Content $dir\GamUpdate.txt | Select-String .*).count
   
   # Extract the contents of the zip file to a temporary directory.
-  # The \gam7 path is included in the zip and may have to be adjusted if it's changed in the future.
   Expand-Archive "$dir\gam7-latest-$winversion" "$dir\" -Force
   # Copy the extracted files to the current location.
+  # The \gam7 path is included in the zip and may have to be adjusted if it's changed in the future.
   Copy-Item "$dir\gam7\*" "$dir\" -Force -Recurse
   # Remove the temporary directory.
   rm "$dir\gam7" -Force -Recurse
+  # Remove the downloaded zip.
+  rm "$dir\gam7-latest-$winversion"
   
   if ($ShowChangeLog -eq $true) {
     # Save the number of lines in the updated change log.
