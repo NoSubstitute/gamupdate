@@ -9,6 +9,8 @@
 # Check the version of GAM7 and update if new version exists
 ## There's now an ARM version for Windows, so code needed one more variable.
 
+cls
+
 # Set this to $false if you do not want to see the change log output
 $ShowChangeLog = $true
 
@@ -74,12 +76,13 @@ $winversion = switch ($architecture.ToUpper()) {
 # Do not change anything below.
 # Create a new variable pointing directly to the gam binary.
 $gam = $gamInstall.Source
+Write-Progress -Activity "GAM Update" -Status "I found gam here $gam with the following information."
 Write-Host "I found gam here $gam with the following information."
 
 # Print currently installed version.
 $currentversion = & $gam --% version
 Write-Progress -Activity "GAM Update" -Status "Current version: $currentversion"
-Write-Host "$currentversion" -ForegroundColor Blue -BackgroundColor White
+Write-Host "$currentversion" -ForegroundColor Blue -BackgroundColor Gray
 
 # Check if there is a new version.
 $version = &$gam --% version checkrc
@@ -131,12 +134,12 @@ if ($lastexitcode -eq 1) {
     # Save the number of lines in the updated change log.
     $newchangeloglinescount = (Get-Content $dir\GamUpdate.txt | Select-String .*).count
     # Get and display the new lines in the change log.
-    Write-Host "Latest Changes in GAM7" -ForegroundColor Blue -BackgroundColor White
+    Write-Host "Latest Changes in GAM7" -ForegroundColor Blue -BackgroundColor Gray
     Get-Content $dir\GamUpdate.txt -Head ($newchangeloglinescount - $oldchangeloglinescount)
   }
 
   # Display a message saying that GAM7 has been updated, then pause. Disable if script is to run automatically.
-  Write-Host "GAM7 has been updated to $latest" -ForegroundColor Green -BackgroundColor White
+  Write-Host "GAM7 has been updated to $latest" -ForegroundColor Green
 }
 else {
   # Display a message saying GAM7 is already up-to-date, then pause. Disable if script is to run automatically.
