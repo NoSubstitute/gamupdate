@@ -1,17 +1,17 @@
-# Just like the script for GAMADV-XTD3, this is not my script originally.
+# Just like the previous script for GAMADV-XTD3, this is not my script originally.
 # It was created by Chris River (on request by Gabriel Clifton) and amended by Paul Ogier.
 # That process can be seen here.
 # https://groups.google.com/g/google-apps-manager/c/k2JEsdT6jcs/m/DdrLY_GcBQAJ
 
 # I updated the script to make it possible to run the script regardless of where the user is, and also to run it automatically.
-# This script does no longer need to be run as an administrator. I'm not sure why. :-)
+# This script no longer needs to be run as an administrator. I'm not sure why. :-)
 
 # Check the version of GAM7 and update if new version exists
-## There's now an ARM version for Windows, so code needed one more variable.
 
+# Clear the screen befores starting the script. Just makes for a nicer experience.
 cls
 
-# Set this to $false if you do not want to see the change log output
+# Set this to $false if you do not want to see the changelog output
 $ShowChangeLog = $true
 
 # If GAM's installation location cannot be automatically located, then this variable MUST be adjusted to match your system.
@@ -74,7 +74,7 @@ $winversion = switch ($architecture.ToUpper()) {
 
 # HERE BE DRAGONS!
 # Do not change anything below.
-# Create a new variable pointing directly to the gam binary.
+# Creating a new variable pointing directly to the gam binary.
 $gam = $gamInstall.Source
 Write-Progress -Activity "GAM Update" -Status "I found gam here $gam with the following information."
 Write-Host "I found gam here $gam with the following information."
