@@ -115,6 +115,9 @@ if ($lastexitcode -eq 1) {
   # Extract the contents of the zip file to a temporary directory.
   Write-Progress -Activity "GAM Update" -Status "Unpacking $dir\gam7-latest-$winversion" -PercentComplete 0
   Expand-Archive "$dir\gam7-latest-$winversion" "$dir\" -Force
+
+ # Remove the old lib directory.
+  rm "$dir\lib" -Force -Recurse
   
   # Copy the extracted files to the current location.
   # The \gam7 path is included in the zip and may have to be adjusted if it's changed in the future.
