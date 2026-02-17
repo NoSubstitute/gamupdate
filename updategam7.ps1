@@ -91,7 +91,7 @@ $version = &$gam --% version checkrc
 if ($lastexitcode -eq 1) {
   
   # Get the latest release from the GAM7 repository on GitHub.
-  $releases = curl "https://api.github.com/repos/GAM-team/GAM/releases" | ConvertFrom-Json
+  $releases = curl -UseBasicParsing "https://api.github.com/repos/GAM-team/GAM/releases" | ConvertFrom-Json
   $release = $releases[0].assets | where { $_.name -like "*$winversion" }
   if ( -not ($release).tag_name  ) { $latest = ($release).name } else { $latest = ($release).tag_name }  
   $latest = ($latest + " " + ($release).updated_at).Replace("-$winversion", "")
