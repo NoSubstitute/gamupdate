@@ -9,7 +9,9 @@
 # Check the version of GAM7 and update if new version exists
 
 # Clear the screen befores starting the script. Just makes for a nicer experience.
-cls
+# Wrapped because there is no console to clear when the script runs from a
+# scheduled task or over SSH, and cls throws "The handle is invalid" there.
+try { cls } catch {}
 
 # Set this to $false if you do not want to see the changelog output
 $ShowChangeLog = $true
@@ -85,13 +87,31 @@ Write-Progress -Activity "GAM Update" -Status "Current version: $currentversion"
 Write-Host "$currentversion" -ForegroundColor Blue -BackgroundColor Gray
 
 # Check if there is a new version.
-$version = &$gam --% version checkrc
+# GAM prints a "Version Check:" block and exits 1 when a newer release exists.
+# When gam.exe cannot start at all - it is locked because a GAM job is running,
+# or the install is broken - PowerShell reports the launch failure as an error
+# and leaves $LASTEXITCODE at 0. Reading the exit code alone therefore treats a
+# check that never ran as "up to date", and the script reports success without
+# updating anything. Confirm the check actually produced its output first.
+$global:LASTEXITCODE = 0
+# No --% here: it makes PowerShell pass the rest of the line to gam.exe
+# verbatim, which would hand it "2>&1 | Out-String" as arguments.
+$versioncheck = & $gam version checkrc 2>&1 | Out-String
+$checkrc = $LASTEXITCODE
 
-# If the last exit code is 1, GAM7 is not up-to-date.
-if ($lastexitcode -eq 1) {
+if ($versioncheck -notmatch "Version Check:") {
+  throw "Could not run the GAM version check. GAM may be running and holding its files open, or the install at $dir may be broken. GAM said: $versioncheck"
+}
+
+# If the exit code is 1, GAM7 is not up-to-date.
+if ($checkrc -eq 1) {
   
   # Get the latest release from the GAM7 repository on GitHub.
-  $releases = curl -UseBasicParsing "https://api.github.com/repos/GAM-team/GAM/releases" | ConvertFrom-Json
+  # PowerShell 6 removed the curl alias for Invoke-WebRequest, so on PowerShell 7
+  # this line reached the real curl.exe, which read -UseBasicParsing as its own
+  # -U (--user) flag and blocked forever on a proxy password prompt.
+  # Invoke-RestMethod exists in 5.1 and 7 and parses the JSON itself.
+  $releases = Invoke-RestMethod -Uri "https://api.github.com/repos/GAM-team/GAM/releases"
   $release = $releases[0].assets | where { $_.name -like "*$winversion" }
   if ( -not ($release).tag_name  ) { $latest = ($release).name } else { $latest = ($release).tag_name }  
   $latest = ($latest + " " + ($release).updated_at).Replace("-$winversion", "")
