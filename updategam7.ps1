@@ -158,7 +158,7 @@ if ($checkrc -eq 1) {
     $newchangeloglinescount = (Get-Content $dir\GamUpdate.txt | Select-String .*).count
     # Get and display the new lines in the change log.
     Write-Host "Latest Changes in GAM7" -ForegroundColor Blue -BackgroundColor Gray
-    Get-Content $dir\GamUpdate.txt -Head ($newchangeloglinescount - $oldchangeloglinescount)
+    Get-Content $dir\GamUpdate.txt -Head ($newchangeloglinescount - $oldchangeloglinescount) | more
   }
 
   # Display a message saying that GAM7 has been updated, then pause. Disable if script is to run automatically.
