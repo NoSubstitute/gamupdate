@@ -1,5 +1,5 @@
 # gamupdate
-Scripts to update GAM7 if there is an update available, and also show what's new.
+Scripts to update [GAM7](https://github.com/GAM-team/GAM) if there is an update available, and also show what's new.
 
 ## For Linux and macOS.
 ### [update7](https://github.com/NoSubstitute/gamupdate/blob/main/update7), update GAM7
